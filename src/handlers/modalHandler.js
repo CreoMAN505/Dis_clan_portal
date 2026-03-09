@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,7 +11,9 @@ export const loadModals = async (client) => {
 
   for (const file of modalFiles) {
     const filePath = join(modalsPath, file);
-    const { default: modal } = await import(filePath);
+    // ✅ Используем pathToFileURL для Windows
+    const fileURL = pathToFileURL(filePath).href;
+    const { default: modal } = await import(fileURL);
 
     client.modals.set(modal.customId, modal);
     console.log(`✅ Модальное окно ${modal.customId} загружено`);

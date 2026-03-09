@@ -1,6 +1,6 @@
 import { readdirSync } from 'fs';
-import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { join, dirname } from 'path';
+import { fileURLToPath, pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -11,7 +11,9 @@ export const loadEvents = async (client) => {
 
   for (const file of eventFiles) {
     const filePath = join(eventsPath, file);
-    const { default: event } = await import(filePath);
+    // ✅ Используем pathToFileURL для Windows
+    const fileURL = pathToFileURL(filePath).href;
+    const { default: event } = await import(fileURL);
 
     if (event.once) {
       client.once(event.name, (...args) => event.execute(...args));

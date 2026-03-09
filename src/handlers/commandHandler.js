@@ -1,6 +1,7 @@
 import { readdirSync } from 'fs';
+import { join, dirname } from 'path';
 import { fileURLToPath } from 'url';
-import { dirname, join } from 'path';
+import { pathToFileURL } from 'url';
 
 const __filename = fileURLToPath(import.meta.url);
 const __dirname = dirname(__filename);
@@ -17,7 +18,9 @@ export const loadCommands = async (client) => {
 
     for (const file of commandFiles) {
       const filePath = join(commandsPath2, file);
-      const { default: command } = await import(filePath);
+      // ✅ Используем pathToFileURL для Windows
+      const fileURL = pathToFileURL(filePath).href;
+      const { default: command } = await import(fileURL);
 
       if ('data' in command && 'execute' in command) {
         client.commands.set(command.data.name, command);
