@@ -7,10 +7,11 @@ export default {
     console.log(`📊 Серверов: ${client.guilds.cache.size}`);
     console.log(`👥 Пользователей: ${client.users.cache.size}`);
 
-    // Устанавливаем статус бота
-    client.user.setPresence({
-      activities: [{ name: '/profile | /roster', type: 'WATCHING' }],
-      status: 'online'
-    });
+    // ⚠️ Временно отключено - может вызывать проблемы
+    // // Устанавливаем статус бота
+    // client.user.setPresence({
+    //   activities: [{ name: '/profile | /roster', type: 'WATCHING' }],
+    //   status: 'online'
+    // });
   }
 };
