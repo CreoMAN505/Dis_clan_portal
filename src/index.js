@@ -45,16 +45,49 @@ await loadCommands(client);
 await loadEvents(client);
 await loadModals(client);
 
-// ✅ Вход бота СНАЧАЛА (остальное уже загружено)
-console.log('🔄 Подключение к Discord...');
-client.login(process.env.DISCORD_TOKEN);
+// ✅ Подробное логирование входа
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
+console.log('🔍 Проверка переменных окружения:');
+console.log('  DISCORD_TOKEN:', process.env.DISCORD_TOKEN ? '✅ Загружен' : '❌ НЕ ЗАГРУЖЕН!');
+console.log('  MONGODB_URI:', process.env.MONGODB_URI ? '✅ Загружен' : '❌ НЕ ЗАГРУЖЕН!');
+console.log('  CLIENT_ID:', process.env.CLIENT_ID || '❌ НЕ ЗАГРУЖЕН!');
+console.log('  GUILD_ID:', process.env.GUILD_ID || '❌ НЕ ЗАГРУЖЕН!');
+console.log('━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━━');
 
-// Обработка ошибок подключения
+// Вход бота
+console.log('🔄 Подключение к Discord...');
+
+try {
+  client.login(process.env.DISCORD_TOKEN);
+} catch (error) {
+  console.error('❌ Ошибка при login():', error.message);
+  process.exit(1);
+}
+
+// Обработка успешного подключения
+client.once('ready', () => {
+  console.log('✅✅✅ БОТ УСПЕШНО ПОДКЛЮЧЁН К DISCORD! ✅✅✅');
+});
+
+// Обработка ошибок WebSocket
 client.on('error', error => {
-  console.error('❌ Ошибка подключения к Discord:', error.message);
+  console.error('❌ Ошибка клиента Discord:', error.message);
+});
+
+client.on('warn', warning => {
+  console.warn('⚠️ Предупреждение Discord:', warning);
 });
 
 // Обработка ошибок
 process.on('unhandledRejection', error => {
   console.error('Unhandled promise rejection:', error);
 });
+
+// Таймаут подключения
+setTimeout(() => {
+  console.error('❌ ТАЙМАУТ: Discord не ответил за 15 секунд');
+  console.error('Проверьте:');
+  console.error('1. Правильность DISCORD_TOKEN');
+  console.error('2. Включены ли Privileged Intents');
+  console.error('3. Приглашён ли бот на сервер');
+}, 15000);
