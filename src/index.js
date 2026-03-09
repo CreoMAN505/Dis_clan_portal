@@ -45,8 +45,14 @@ await loadCommands(client);
 await loadEvents(client);
 await loadModals(client);
 
-// Вход бота
+// ✅ Вход бота СНАЧАЛА (остальное уже загружено)
+console.log('🔄 Подключение к Discord...');
 client.login(process.env.DISCORD_TOKEN);
+
+// Обработка ошибок подключения
+client.on('error', error => {
+  console.error('❌ Ошибка подключения к Discord:', error.message);
+});
 
 // Обработка ошибок
 process.on('unhandledRejection', error => {
