@@ -65,6 +65,17 @@ client.on('raw', data => {
   }
 });
 
+// ✅ Логирование WebSocket событий
+client.ws.on('error', error => {
+  console.error('❌ WebSocket ошибка:', error.message);
+});
+
+client.ws.on('close', event => {
+  console.error('❌ WebSocket закрыт:', event);
+  console.error('Код:', event.code);
+  console.error('Причина:', event.reason);
+});
+
 client.once('ready', () => {
   console.log('✅✅✅ БОТ УСПЕШНО ПОДКЛЮЧЁН К DISCORD! ✅✅✅');
   console.log(`🤖 Бот: ${client.user.tag}`);
